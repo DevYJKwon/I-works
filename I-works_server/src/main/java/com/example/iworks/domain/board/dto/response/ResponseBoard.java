@@ -23,4 +23,5 @@ public class ResponseBoard {
         this.boardCreatedAt = board.getBoardCreatedAt();
         this.boardUpdatedAt = board.getBoardUpdatedAt();
     }
+
 }

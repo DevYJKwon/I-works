@@ -1,17 +1,18 @@
 package com.example.iworks.domain.board.domain;
 
+import com.example.iworks.domain.board.dto.request.UpdateBoard;
 import com.example.iworks.global.model.entity.Code;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
 @Table(name = "board")
 public class Board {
 
@@ -22,12 +23,13 @@ public class Board {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_category_code_id",
             referencedColumnName = "code_id",
-            nullable = false, updatable = false, insertable = false
+            nullable = false, updatable = false
     )
     private Code boardCategoryCode; // 게시판 카테고리
 
     @Column(name = "board_owner_id",
-            nullable = false, updatable = false, insertable = false )
+            nullable = false, updatable = false
+    )
     private int boardOwnerId; // 게시판 주체 아이디
 
     @Column(name = "board_creator_id", nullable = false)
@@ -54,13 +56,13 @@ public class Board {
     private Boolean boardIsDeleted; // 삭제여부
 
     @Column(name = "board_modifier_id")
-    private Integer boardModifierId; // 수정자 아이디
+    private int boardModifierId; // 수정자 아이디
 
-    public void updateBoard(Board board) {
-        this.boardTitle = board.getBoardTitle();
-        this.boardContent = board.getBoardContent();
+    public void update(UpdateBoard requestBoard) {
+        this.boardTitle = requestBoard.getBoardTitle();
+        this.boardContent = requestBoard.getBoardContent();
         this.boardUpdatedAt = LocalDateTime.now();
-        this.boardModifierId = board.getBoardModifierId();
+        this.boardModifierId = requestBoard.getBoardModifierId();
     }
 
 }
