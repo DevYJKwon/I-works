@@ -1,11 +1,17 @@
 package com.example.iworks.domain.board.service;
 
 import com.example.iworks.domain.board.domain.Board;
+import com.example.iworks.domain.board.domain.Bookmark;
 import com.example.iworks.domain.board.dto.request.RequestBoard;
 import com.example.iworks.domain.board.dto.request.SearchKeyword;
+import com.example.iworks.domain.board.dto.request.UpdateBoard;
 import com.example.iworks.domain.board.dto.response.ResponseBoard;
 import com.example.iworks.domain.board.repository.BoardRepository;
+import com.example.iworks.domain.board.repository.BookmarkRepository;
+import com.example.iworks.domain.user.domain.User;
+import com.example.iworks.domain.user.repository.UserRepository;
 import com.example.iworks.global.model.entity.Code;
+import com.example.iworks.global.model.entity.CodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,82 +22,116 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-@Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
+@Service
 public class BoardServiceImpl implements BoardService{
 
     private final BoardRepository boardRepository;
+    private final BookmarkRepository bookmarkRepository;
+    private final UserRepository userRepository;
+    private final CodeRepository codeRepository;
+
     private final PageRequest pageRequest = PageRequest.of(0, 10);
 
-    //게시글 목록 전체 조회
-    public List<ResponseBoard> findBoards() {
-        Page<Board> boards = boardRepository.findAll(pageRequest);
-        return boards.stream()
-                .map(ResponseBoard::new)
-                .collect(toList());
-    }
-
-    // 게시판 카테고리별 게시글 조회 (공지, 자유)
-    public List<ResponseBoard> findAllByBoardCategoryCode(Code categoryCode) {
-        List<Board> boards = boardRepository.findAllByBoardCategoryCode(pageRequest, categoryCode);
-        return boards.stream()
-                .map(ResponseBoard::new)
-                .collect(toList());
-    }
-
-    // 게시판 카테고리별 게시글 조회 (부서, 팀)
-    public List<ResponseBoard> findAllByBoardCategoryCodeAndBoardOwnerId(Code categoryCode, int boardOwnerId) {
-        List<Board> boards = boardRepository.findAllByBoardCategoryCodeAndBoardOwnerId(pageRequest, categoryCode, boardOwnerId);
-        return boards.stream()
-                .map(ResponseBoard::new)
-                .collect(toList());
-    }
-
-    //게시글 작성
     @Transactional
-    public void saveBoard(Board board) {
-        boardRepository.save(board);
+    public void registerBoard(RequestBoard requestBoard) {
+        boardRepository.save(requestBoard.toEntity());
     }
 
-    //게시글 수정
     @Transactional
-    public void updateBoard(int boardId, RequestBoard requestBoard) {
+    public void updateBoard(int boardId, UpdateBoard updateBoard) {
         Board findBoard = boardRepository.findById((long) boardId)
                 .orElseThrow(IllegalStateException::new); //예외 메서드 추가
-        findBoard.updateBoard(findBoard);
+        findBoard.update(updateBoard);
     }
 
-    //게시글 삭제
     @Transactional
-    public void deleteBoard(int BoardId) {
-        Board findBoard = boardRepository.findById((long) BoardId)
+    public void deleteBoard(int boardId) {
+        Board findBoard = boardRepository.findById((long) boardId)
                 .orElseThrow(IllegalStateException::new);
-        boardRepository.delete(findBoard);
+        findBoard.delete(boardId);
     }
 
-    // 게시글 검색
-    public List<ResponseBoard> findAllByKeyword(SearchKeyword keyword) {
+    public List<ResponseBoard> getAll() {
+        return boardRepository.findAll(pageRequest)
+                .stream()
+                .map(ResponseBoard::new)
+                .collect(toList());
+    }
+
+    @Override
+    public ResponseBoard getBoard(int boardId) {
+        return boardRepository.findById((long) boardId)
+                .map(ResponseBoard::new)
+                .orElseThrow(IllegalStateException::new);
+    }
+
+    public List<ResponseBoard> getAllByBoardCategoryCode(int boardCategoryCodeId) {
+        return boardRepository.findAllByBoardCategoryCode(pageRequest, findCode(boardCategoryCodeId))
+                .stream()
+                .map(ResponseBoard::new)
+                .collect(toList());
+    }
+
+    @Override
+    public ResponseBoard getBoardByBoardCategoryCode(int boardId, int boardCategoryCodeId) {
+        return new ResponseBoard(
+                boardRepository.findByBoardCategoryCodeAndBoardId(
+                        boardId,
+                        findCode(boardCategoryCodeId)));
+    }
+
+    public List<ResponseBoard> getAllByBoardCategoryCodeAndBoardOwnerId(int boardCategoryCodeId, int boardOwnerId) {
+        return boardRepository.findAllByBoardCategoryCodeAndBoardOwnerId(pageRequest, findCode(boardCategoryCodeId), boardOwnerId)
+                .stream()
+                .map(ResponseBoard::new)
+                .collect(toList());
+    }
+
+    @Override
+    public ResponseBoard getBoardByBoardCategoryCodeAndBoardOwnerId(int boardId, int boardCategoryCodeId, int boardOwnerId) {
+        return new ResponseBoard(
+                boardRepository.findByBoardCategoryCodeAndBoardOwnerIdAndBoardIdAndBoardId(
+                        boardId,
+                        findCode(boardCategoryCodeId),
+                        boardOwnerId));
+    }
+
+    public List<ResponseBoard> getAllByKeyword(SearchKeyword keyword) {
         return boardRepository.findAllByKeyword(pageRequest, keyword);
     }
 
-    // 작성자가 작성한 게시글 검색
-    public List<ResponseBoard> findAllByBoardCreatedId(int boardOwnerId) {
-        return boardRepository.findAllByBoardCreatedId(pageRequest, boardOwnerId);
+    public List<ResponseBoard> getAllByKeywords(String keywords) {
+        return boardRepository.findAllByKeywords(pageRequest, keywords);
     }
 
-    // 게시글 제목 검색
-    public List<ResponseBoard> findAllByBoardTitle(String boardTitle) {
-        return boardRepository.findAllByBoardTitle(pageRequest, boardTitle);
+    @Transactional
+    public void bookmarkBoard(int boardId, String userEid) {
+        Board findBoard = boardRepository.findById((long) boardId)
+                .orElseThrow(IllegalStateException::new);
+        User findUser = userRepository.findByUserEid(userEid);
+        if (findUser == null) {
+            throw new IllegalStateException("존재하지 않는 유저입니다.");
+        }
+
+        Bookmark findBookmark = bookmarkRepository.findBookmarkByBoardAndUser(findBoard, findUser);
+
+        if (findBookmark == null) {
+            Bookmark bookmark = Bookmark.builder()
+                    .board(findBoard)
+                    .user(findUser)
+                    .build();
+            bookmarkRepository.save(bookmark);
+        }
+        else {
+            bookmarkRepository.delete(findBookmark);
+        }
     }
 
-    // 게시글 내용 검색
-    public List<ResponseBoard> findAllByBoardContent(String boardContent) {
-        return boardRepository.findAllByBoardContent(pageRequest, boardContent);
+    private Code findCode(int boardCategoryCodeId) {
+        return codeRepository.findById(boardCategoryCodeId)
+                .orElseThrow(IllegalStateException::new);
     }
 
-    // 게시글 제목 + 내용 검색
-    public List<ResponseBoard> findAllByBoardTitleOrBoardContent(String boardTitle, String boardContent) {
-        return boardRepository.findAllByBoardTitleOrBoardContent(pageRequest, boardTitle, boardContent);
-    }
 }
