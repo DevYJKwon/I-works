@@ -50,28 +50,16 @@ public class BoardController {
         return response.handleSuccess(boardService.getBoard(boardId));
     }
 
-    //카테고리별 게시글 전체 조회 (공지, 자유)
-    @GetMapping("/byCategory")
-    public ResponseEntity<?> getBoardsByCategoryCode(@RequestParam int boardCategoryCodeId) {
-        return response.handleSuccess(boardService.getAllByBoardCategoryCode(boardCategoryCodeId));
-    }
-
-    //카테고리별 게시글 세부 조회 (공지, 자유)
-    @GetMapping("/byCategory/{boardId}")
-    public ResponseEntity<?> getBoardByCategoryCode(@PathVariable int boardId,  @RequestParam int boardOwnerId) {
-        return null;
-    }
-
-    //카테고리별 게시글 전체 조회 (부서, 팀)
-    @GetMapping("byCategoryAndOwner")
+    //카테고리별 게시글 전체 조회
+    @GetMapping("byCategory")
     public ResponseEntity<?> getBoardsByCategoryCodeAndOwnerId(
             @RequestParam int boardCategoryCodeId,
             @RequestParam int boardOwnerId) {
         return response.handleSuccess(boardService.getAllByBoardCategoryCodeAndBoardOwnerId(boardCategoryCodeId, boardOwnerId));
     }
     
-    //카테고리별 게시글 세부 조회 (부서, 팀)
-    @GetMapping("byCategoryAndOwner/{boardId}")
+    //카테고리별 게시글 세부 조회
+    @GetMapping("byCategory/{boardId}")
     public ResponseEntity<?> getBoardByCategoryCodeAndOwnerId(
             @PathVariable int boardId,
             @RequestParam int boardCategoryCodeId,

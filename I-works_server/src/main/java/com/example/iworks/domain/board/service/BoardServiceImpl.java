@@ -67,21 +67,6 @@ public class BoardServiceImpl implements BoardService{
                 .orElseThrow(IllegalStateException::new);
     }
 
-    public List<ResponseBoard> getAllByBoardCategoryCode(int boardCategoryCodeId) {
-        return boardRepository.findAllByBoardCategoryCode(pageRequest, findCode(boardCategoryCodeId))
-                .stream()
-                .map(ResponseBoard::new)
-                .collect(toList());
-    }
-
-    @Override
-    public ResponseBoard getBoardByBoardCategoryCode(int boardId, int boardCategoryCodeId) {
-        return new ResponseBoard(
-                boardRepository.findByBoardCategoryCodeAndBoardId(
-                        boardId,
-                        findCode(boardCategoryCodeId)));
-    }
-
     public List<ResponseBoard> getAllByBoardCategoryCodeAndBoardOwnerId(int boardCategoryCodeId, int boardOwnerId) {
         return boardRepository.findAllByBoardCategoryCodeAndBoardOwnerId(pageRequest, findCode(boardCategoryCodeId), boardOwnerId)
                 .stream()
@@ -92,7 +77,7 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public ResponseBoard getBoardByBoardCategoryCodeAndBoardOwnerId(int boardId, int boardCategoryCodeId, int boardOwnerId) {
         return new ResponseBoard(
-                boardRepository.findByBoardCategoryCodeAndBoardOwnerIdAndBoardIdAndBoardId(
+                boardRepository.findByBoardIdAndBoardCategoryCodeAndBoardOwnerIdAndBoardId(
                         boardId,
                         findCode(boardCategoryCodeId),
                         boardOwnerId));
