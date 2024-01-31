@@ -65,4 +65,9 @@ public class Board {
         this.boardModifierId = requestBoard.getBoardModifierId();
     }
 
+    public void delete(int boardId) {
+        this.boardIsDeleted = true;
+        this.boardDeletedAt = LocalDateTime.now();
+    }
+
 }

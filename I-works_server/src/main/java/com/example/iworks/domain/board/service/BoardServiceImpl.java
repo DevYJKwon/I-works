@@ -10,6 +10,8 @@ import com.example.iworks.domain.board.repository.BoardRepository;
 import com.example.iworks.domain.board.repository.BookmarkRepository;
 import com.example.iworks.domain.user.domain.User;
 import com.example.iworks.domain.user.repository.UserRepository;
+import com.example.iworks.global.model.entity.Code;
+import com.example.iworks.global.model.entity.CodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,8 +28,9 @@ import static java.util.stream.Collectors.toList;
 public class BoardServiceImpl implements BoardService{
 
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final UserRepository userRepository;
+    private final CodeRepository codeRepository;
 
     private final PageRequest pageRequest = PageRequest.of(0, 10);
 
@@ -44,10 +47,10 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Transactional
-    public void deleteBoard(int BoardId) {
-        Board findBoard = boardRepository.findById((long) BoardId)
+    public void deleteBoard(int boardId) {
+        Board findBoard = boardRepository.findById((long) boardId)
                 .orElseThrow(IllegalStateException::new);
-        boardRepository.delete(findBoard);
+        findBoard.delete(boardId);
     }
 
     public List<ResponseBoard> getAll() {
@@ -57,18 +60,42 @@ public class BoardServiceImpl implements BoardService{
                 .collect(toList());
     }
 
+    @Override
+    public ResponseBoard getBoard(int boardId) {
+        return boardRepository.findById((long) boardId)
+                .map(ResponseBoard::new)
+                .orElseThrow(IllegalStateException::new);
+    }
+
     public List<ResponseBoard> getAllByBoardCategoryCode(int boardCategoryCodeId) {
-        return boardRepository.findAllByBoardCategoryCode(pageRequest, boardCategoryCodeId)
+        return boardRepository.findAllByBoardCategoryCode(pageRequest, findCode(boardCategoryCodeId))
                 .stream()
                 .map(ResponseBoard::new)
                 .collect(toList());
     }
 
+    @Override
+    public ResponseBoard getBoardByBoardCategoryCode(int boardId, int boardCategoryCodeId) {
+        return new ResponseBoard(
+                boardRepository.findByBoardCategoryCodeAndBoardId(
+                        boardId,
+                        findCode(boardCategoryCodeId)));
+    }
+
     public List<ResponseBoard> getAllByBoardCategoryCodeAndBoardOwnerId(int boardCategoryCodeId, int boardOwnerId) {
-        return boardRepository.findAllByBoardCategoryCodeAndBoardOwnerId(pageRequest, boardCategoryCodeId, boardOwnerId)
+        return boardRepository.findAllByBoardCategoryCodeAndBoardOwnerId(pageRequest, findCode(boardCategoryCodeId), boardOwnerId)
                 .stream()
                 .map(ResponseBoard::new)
                 .collect(toList());
+    }
+
+    @Override
+    public ResponseBoard getBoardByBoardCategoryCodeAndBoardOwnerId(int boardId, int boardCategoryCodeId, int boardOwnerId) {
+        return new ResponseBoard(
+                boardRepository.findByBoardCategoryCodeAndBoardOwnerIdAndBoardIdAndBoardId(
+                        boardId,
+                        findCode(boardCategoryCodeId),
+                        boardOwnerId));
     }
 
     public List<ResponseBoard> getAllByKeyword(SearchKeyword keyword) {
@@ -100,6 +127,11 @@ public class BoardServiceImpl implements BoardService{
         else {
             bookmarkRepository.delete(findBookmark);
         }
+    }
+
+    private Code findCode(int boardCategoryCodeId) {
+        return codeRepository.findById(boardCategoryCodeId)
+                .orElseThrow(IllegalStateException::new);
     }
 
 }

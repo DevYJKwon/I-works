@@ -18,16 +18,25 @@ public interface BoardService {
     public void updateBoard(int boardId, UpdateBoard updateBoard);
 
     //게시글 삭제
-    public void deleteBoard(int BoardId);
+    public void deleteBoard(int boardId);
 
     //게시글 전체 조회
     public List<ResponseBoard> getAll();
 
-    //카테고리별 게시글 조회 (공지, 자유)
+    //게시글 세부 조회
+    public ResponseBoard getBoard(int boardId);
+
+    //카테고리별 게시글 전체 조회 (공지, 자유)
     public List<ResponseBoard> getAllByBoardCategoryCode(int boardCategoryCodeId);
 
-    //카테고리별 게시글 조회 (부서, 팀)
+    //카테고리별 게시글 세부 조회 (공지, 자유)
+    public ResponseBoard getBoardByBoardCategoryCode(int boardId, int boardCategoryCodeId);
+
+    //카테고리별 게시글 전체 조회 (부서, 팀)
     public List<ResponseBoard> getAllByBoardCategoryCodeAndBoardOwnerId(int boardCategoryCodeId, int boardOwnerId);
+
+    //카테고리별 게시글 세부 조회 (부서, 팀)
+    public ResponseBoard getBoardByBoardCategoryCodeAndBoardOwnerId(int boardId, int boardCategoryCodeId, int boardOwnerId);
 
     //키워드별 게시글 검색
     public List<ResponseBoard> getAllByKeyword(SearchKeyword keyword);
