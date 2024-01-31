@@ -26,16 +26,10 @@ public interface BoardService {
     //게시글 세부 조회
     public ResponseBoard getBoard(int boardId);
 
-    //카테고리별 게시글 전체 조회 (공지, 자유)
-    public List<ResponseBoard> getAllByBoardCategoryCode(int boardCategoryCodeId);
-
-    //카테고리별 게시글 세부 조회 (공지, 자유)
-    public ResponseBoard getBoardByBoardCategoryCode(int boardId, int boardCategoryCodeId);
-
-    //카테고리별 게시글 전체 조회 (부서, 팀)
+    //카테고리별 게시글 전체 조회
     public List<ResponseBoard> getAllByBoardCategoryCodeAndBoardOwnerId(int boardCategoryCodeId, int boardOwnerId);
 
-    //카테고리별 게시글 세부 조회 (부서, 팀)
+    //카테고리별 게시글 세부 조회
     public ResponseBoard getBoardByBoardCategoryCodeAndBoardOwnerId(int boardId, int boardCategoryCodeId, int boardOwnerId);
 
     //키워드별 게시글 검색
