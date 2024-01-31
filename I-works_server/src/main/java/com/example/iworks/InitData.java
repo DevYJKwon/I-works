@@ -119,6 +119,28 @@ public class InitData {
                     .codeCodeGroup(codeGroup2)
                     .build());
 
+            CodeGroup codeGroup3 = em.find(CodeGroup.class, 3);
+
+            em.persist(Code.builder()
+                    .codeName("ROLE_ADMIN")
+                    .codeCodeGroup(codeGroup3)
+                    .build());
+
+            em.persist(Code.builder()
+                    .codeName("ROLE_CEO")
+                    .codeCodeGroup(codeGroup3)
+                    .build());
+
+            em.persist(Code.builder()
+                    .codeName("ROLE_LEADER")
+                    .codeCodeGroup(codeGroup3)
+                    .build());
+
+            em.persist(Code.builder()
+                    .codeName("ROLE_EMPLOYEE")
+                    .codeCodeGroup(codeGroup3)
+                    .build());
+
             //부서별 유저 데이터
             for (int i = 1; i <= 5; i++){
                 String departmentName = "부서" + i;
@@ -128,8 +150,7 @@ public class InitData {
                 em.persist(department);
                 departmentList.add(department);
 
-                //부서 별 유저 데이터
-                for (int j = 1; j <= 20; j++){
+
                     User user = User.builder()
                             .userEid(generateEid())
                             .userEmail(userEmailSeq+++"")
@@ -137,8 +158,6 @@ public class InitData {
                             .userDepartment(department)
                             .build();
                     em.persist(user);
-                    userList.add(user);
-                }
             }
 
             //팀 별 유저

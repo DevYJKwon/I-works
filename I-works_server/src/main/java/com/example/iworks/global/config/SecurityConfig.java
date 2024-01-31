@@ -1,9 +1,9 @@
 package com.example.iworks.global.config;
 
 import com.example.iworks.domain.user.repository.UserRepository;
+import com.example.iworks.global.filter.CustomCorsFilter;
 import com.example.iworks.global.filter.JwtAuthenticationFilter;
 import com.example.iworks.global.filter.JwtAuthorizationFilter;
-import com.example.iworks.global.filter.CustomCorsFilter;
 import com.example.iworks.global.filter.JwtExceptionFilter;
 import com.example.iworks.global.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +53,7 @@ public class SecurityConfig {
                 // 특정 URL에 대한 권한 설정.
                 .authorizeHttpRequests((authorizeRequests) -> {
                     authorizeRequests
+                            .requestMatchers("/api/sessions").permitAll()
                             .requestMatchers("/api/user/join").anonymous() // 나중에 어드민으로 바꿈
                             .requestMatchers("/api/user/login").anonymous()
 

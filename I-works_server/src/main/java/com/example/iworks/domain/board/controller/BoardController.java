@@ -32,7 +32,7 @@ public class BoardController {
     }
 
     //게시글 삭제
-    @PutMapping("/{boardId}")
+    @PostMapping("/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable int boardId) {
         boardService.deleteBoard(boardId);
         return response.handleSuccess("게시글 삭제 완료");
@@ -74,10 +74,10 @@ public class BoardController {
     }
 
     //통합 키워드별 게시글 검색
-    @GetMapping("/search")
+/*    @GetMapping("/search")
     public ResponseEntity<?> getBoardsByKeywords(@RequestParam String keywords) {
         return response.handleSuccess(boardService.getAllByKeywords(keywords));
-    }
+    }*/
 
     //북마크 등록/삭제
     @PostMapping("/bookmark/")

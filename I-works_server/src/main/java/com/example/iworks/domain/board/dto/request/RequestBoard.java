@@ -1,9 +1,15 @@
 package com.example.iworks.domain.board.dto.request;
 
 import com.example.iworks.domain.board.domain.Board;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class RequestBoard {
 
     private int boardId;
