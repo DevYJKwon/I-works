@@ -4,11 +4,7 @@ package com.example.iworks.domain.user.domain;
 import com.example.iworks.domain.department.domain.Department;
 import com.example.iworks.global.model.entity.Code;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,11 +26,11 @@ public class User {
     @Column(name = "user_id", nullable = false) // 생략시 primitive type의 경우 not null로 생성
     private int userId; //유저 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_department_id")
     private Department userDepartment; //부서
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_position_code_id", referencedColumnName = "code_id", insertable = false, updatable = false)
     private Code userPositionCode; //직급 코드 아이디
 

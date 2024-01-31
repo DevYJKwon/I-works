@@ -3,6 +3,7 @@ package com.example.iworks.domain.user.controller;
 import com.example.iworks.domain.department.repository.DepartmentRepository;
 import com.example.iworks.domain.user.domain.User;
 import com.example.iworks.domain.user.dto.UserJoinRequestDto;
+import com.example.iworks.domain.user.dto.UserJoinResponseDto;
 import com.example.iworks.domain.user.repository.UserRepository;
 import com.example.iworks.global.model.Response;
 import com.example.iworks.global.model.repository.CodeRepository;
@@ -66,7 +67,7 @@ public class UserApiController {
         Map<String, Object> data = new HashMap<>();
         data.put("message","회원가입 성공!");
         data.put("data",password);
-        data.put("user",user.toString());
+        data.put("user",new UserJoinResponseDto(user));
         return response.handleSuccess(data);
     }
 

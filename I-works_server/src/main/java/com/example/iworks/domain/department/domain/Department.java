@@ -2,7 +2,6 @@ package com.example.iworks.domain.department.domain;
 
 import com.example.iworks.domain.user.domain.User;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 import java.time.LocalDateTime;

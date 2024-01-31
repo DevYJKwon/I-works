@@ -12,6 +12,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class InitData {
-
     private final InitDataService initDataService;
 
     @PostConstruct
@@ -149,12 +149,13 @@ public class InitData {
                         .build();
                 em.persist(department);
                 departmentList.add(department);
-
-
+                BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+                String pwd = bCryptPasswordEncoder.encode("1234");
                     User user = User.builder()
                             .userEid(generateEid())
                             .userEmail(userEmailSeq+++"")
                             .userNameFirst("유저"+userSeq)
+                            .userPassword(pwd)
                             .userDepartment(department)
                             .build();
                     em.persist(user);
