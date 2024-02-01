@@ -1,12 +1,9 @@
 package com.example.iworks.domain.department.domain;
 
-import com.example.iworks.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -51,14 +48,4 @@ public class Department {
     @Column(name = "department_updated_at", nullable = false)
     private LocalDateTime departmentUpdatedAt = LocalDateTime.now(); // 최종 수정일시
 
-    @Builder.Default
-    @OneToMany(mappedBy = "userDepartment")
-    private List<User> departmentUsers = new ArrayList<User>();
-
-    public void addUser(User user){
-        this.departmentUsers.add(user);
-        if(user.getUserDepartment() != this){
-            user.setDepartment(this);
-        }
-    }
 }

@@ -90,9 +90,6 @@ public class User {
 
     public void setDepartment(Department department){
         this.userDepartment = department;
-        if(!department.getDepartmentUsers().contains(this)){
-            department.getDepartmentUsers().add(this);
-        }
     }
 
     public List<String> getRoleList(){
